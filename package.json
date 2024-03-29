@@ -11,7 +11,8 @@
   },
   "author": "Florian Boulestreau <florian.boulestreau@gmail.com>",
   "license": "NaN",
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
     "@types/node": "^13.7.0",
     "nodemon": "^2.0.2",
