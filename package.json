@@ -11,13 +11,15 @@
   },
   "author": "Florian Boulestreau <florian.boulestreau@gmail.com>",
   "license": "NaN",
-  "dependencies": {
-  },
   "devDependencies": {
     "@types/node": "^13.7.0",
     "nodemon": "^2.0.2",
     "ts-node": "^8.6.2",
     "tslint": "^6.0.0",
     "typescript": "^3.7.5"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.11.0",
+    "mongoose": "^8.2.4"
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "name": "Test Pono",
+  "name": "Pono technical test",
   "type": "collection",
   "ignore": [
     "node_modules",
