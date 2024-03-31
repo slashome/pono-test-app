@@ -1,7 +1,6 @@
 import {Controller} from "./controller";
 import {IncomingMessage} from "http";
 import {NewBook} from "./models";
-import mongoose from "mongoose";
 
 enum postRoutes {
     POST_BOOK = '/book',
@@ -9,10 +8,10 @@ enum postRoutes {
 
 export class Router {
     static async findRoute(incomingMessage: IncomingMessage): Promise<any> {
-        const mongoose = await this.getMongoose();
         if (incomingMessage.url === postRoutes.POST_BOOK && incomingMessage.method === 'POST') {
+            console.log('ROUTE : add book');
             const body = await this.getBody(incomingMessage);
-            return Controller.addBook(mongoose, body as NewBook);
+            return Controller.addBook(body as NewBook);
         }
         return null;
     }
@@ -25,7 +24,9 @@ export class Router {
             });
             incomingMessage.on('end', () => {
                 if (body) {
-                    resolve(JSON.parse(body));
+                    const jsonBody = JSON.parse(body);
+                    console.log('jsonBody', jsonBody);
+                    resolve(jsonBody);
                 } else {
                     console.log('No body found', body);
                     reject(null);
@@ -35,13 +36,5 @@ export class Router {
                 reject(error);
             });
         });
-    }
-
-    private static async getMongoose(): Promise<mongoose.Connection> {
-        await mongoose.connect('mongodb://127.0.0.1:27017/pono-test-db');
-        const db = mongoose.connection;
-        db.on('error', console.error.bind(console, 'connection error:'));
-        db.once('open', function() {  console.log("connecté à Mongoose")});
-        return db;
     }
 }

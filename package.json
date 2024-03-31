@@ -19,7 +19,6 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
-    "@prisma/client": "^5.11.0",
-    "mongoose": "^8.2.4"
+    "@prisma/client": "^5.11.0"
   }
 }

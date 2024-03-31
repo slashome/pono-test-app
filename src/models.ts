@@ -1,4 +1,3 @@
-import mongoose, {ObjectId} from "mongoose";
 
 
 export interface Page {
@@ -18,15 +17,15 @@ export interface Book extends NewBook {
     // _id: ObjectId;
 }
 
-export const PageSchema = mongoose.model('Page', new mongoose.Schema({
-    content: String,
-    pageNumber: Number,
-}));
-
-export const BookSchema = mongoose.model('Book', new mongoose.Schema({
-    author: String,
-    title: String,
-    publicationDate: Date,
-    pages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Page' }],
-    resume: String,
-}));
+// export const PageSchema = mongoose.model('Page', new mongoose.Schema({
+//     content: String,
+//     pageNumber: Number,
+// }));
+//
+// export const BookSchema = mongoose.model('Book', new mongoose.Schema({
+//     author: String,
+//     title: String,
+//     publicationDate: Date,
+//     pages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Page' }],
+//     resume: String,
+// }));
