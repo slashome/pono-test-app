@@ -1,19 +1,15 @@
 import {NewBook} from "./models";
+import {PrismaClient} from "@prisma/client";
 export class Controller {
-    static async addBook(newBook: NewBook): Promise<any> {
-        return new Promise((resolve, reject) => {
-            resolve(newBook);
+    static async addBook(prisma: PrismaClient, newBook: NewBook): Promise<any> {
+        await prisma.book.create({
+            data: {
+                ...newBook,
+                publicationDate: new Date(newBook.publicationDate),
+                pages: {
+                    create: newBook.pages,
+                }
+            }
         });
-
-        // console.log('newBook', newBook);
-//        const pages = PageSchema.collection.insertMany(newBook.pages);
-//         console.log('pages', pages);
-//         return pages;
-        // const book = new BookSchema({
-        //     ...newBook,
-        //     publicationDate: new Date(newBook.publicationDate),
-        //     resume: null,
-        // });
-        // return book.save();
     }
 }

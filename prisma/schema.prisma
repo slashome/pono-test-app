@@ -12,7 +12,7 @@ model Book {
   author          String
   title           String
   publicationDate DateTime
-  Pages           Page[]
+  pages           Page[]
 }
 
 model Page {

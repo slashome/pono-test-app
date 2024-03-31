@@ -8,6 +8,7 @@ const SERVER_PORT = 3000;
 const server: http.Server = createServer((incomingMessage: IncomingMessage, serverResponse: ServerResponse) => {
     serverResponse.setHeader('Content-Type', 'application/json');
     let defaultAppResponse = { message: "Hello World" };
+    console.log('Incoming request', incomingMessage.url);
     const appResponse = Router.findRoute(incomingMessage);
     serverResponse.end(JSON.stringify(defaultAppResponse ?? appResponse));
 });
