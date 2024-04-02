@@ -20,6 +20,11 @@ export interface ImportPayload {
     path: string;
 }
 
+export interface CollectionPayload {
+    title: string;
+    bookIds: number[];
+}
+
 export interface MessageResponse {
     error?: boolean;
     message: string;

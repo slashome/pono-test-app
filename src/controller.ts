@@ -1,10 +1,12 @@
-import {ImportPayload, MessageResponse, NewBook, Pagination} from "./models";
-import {Book, Page} from "@prisma/client";
+import {CollectionPayload, ImportPayload, MessageResponse, NewBook, Pagination} from "./models";
+import {Book, Page, PrismaClient} from "@prisma/client";
 import {PageRepository, PagesUpdateQuery} from "./repositories/page.repository";
 import {BookRepository} from "./repositories/book.repository";
 import {bookPresenter, fullBookPresenter} from "./presenters";
 import * as fs from "fs";
 import {BookPriceFromAPI, PriceApi} from "./price-api";
+import {CollectionRepository} from "./repositories/collection.repository";
+import {CollectionPageRepository} from "./repositories/collectionPage.repository";
 
 enum ImportTypes {
     FOLDER = 'folder',
@@ -15,11 +17,16 @@ export class Controller {
 
     private pageRepository: PageRepository;
     private bookRepository: BookRepository;
+    private collectionRepository: CollectionRepository;
+    private collectionPageRepository: CollectionPageRepository;
     private priceApi: PriceApi;
 
     constructor() {
-        this.pageRepository = new PageRepository();
-        this.bookRepository = new BookRepository();
+        const prisma = new PrismaClient();
+        this.pageRepository = new PageRepository(prisma);
+        this.bookRepository = new BookRepository(prisma);
+        this.collectionRepository = new CollectionRepository(prisma);
+        this.collectionPageRepository = new CollectionPageRepository(prisma);
         this.priceApi = new PriceApi();
     }
 
@@ -67,6 +74,25 @@ export class Controller {
         return fullBookPresenter(updatedBook);
     }
 
+    async createCollection(collectionPayload: CollectionPayload): Promise<any> {
+        const books: Book[] = await this.bookRepository.getBooksByIds(collectionPayload.bookIds, {pages: true});
+        if (books.length !== collectionPayload.bookIds.length) {
+            return {message: 'Some books not found'};
+        }
+        const pages: Page[] = books.map((book: Book) => {
+            return book.pages;
+        }).flat(1);
+
+        let collection = await this.collectionRepository.getCollection(collectionPayload.title);
+        if (!collection) {
+            collection = await this.collectionRepository.createCollection(collectionPayload.title);
+        }
+
+        await this.collectionPageRepository.addPagesToCollection(collection.id, pages);
+        return {message: 'Collection created', collection};
+
+    }
+
     async deleteBook(bookId: number) {
         const book = await this.bookRepository.getBookById(bookId, {pages: true});
         if (!book || !bookId) {
@@ -95,7 +121,10 @@ export class Controller {
         } catch (e) {
             return {message: 'Error reading folder'};
         }
-        const books: Promise<any>[] = files.map((bookFolderName: string) => {
+        const foldersToIgnore = ['.DS_Store'];
+        const books: Promise<any>[] = files
+            .filter((file: string) => !foldersToIgnore.includes(file))
+            .map((bookFolderName: string) => {
             const readmeContent = fs.readFileSync(path + '/' + bookFolderName + '/readme.md', 'utf8');
 
             const bookInformations = readmeContent.match(/Title: (.+)|Author: (.+)|Release: (.+)/g) as string[];

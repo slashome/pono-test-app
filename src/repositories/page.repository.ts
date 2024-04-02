@@ -18,12 +18,9 @@ export interface PagesUpdateQuery {
 }
 
 export class PageRepository {
-
-    private prisma: PrismaClient;
-
-    constructor() {
-        this.prisma = new PrismaClient();
-    }
+    constructor(
+        private prisma: PrismaClient
+    ) {}
 
     public async deletePages(pageIds: any) {
         await this.prisma.page.deleteMany({

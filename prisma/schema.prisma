@@ -15,12 +15,27 @@ model Book {
   pages           Page[]
 }
 
+model Collection {
+  id             Int              @id @default(autoincrement())
+  title          String           @unique
+  CollectionPage CollectionPage[]
+}
+
+model CollectionPage {
+  id           Int        @id @default(autoincrement())
+  collectionId Int
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  pageId       Int
+  page         Page       @relation(fields: [pageId], references: [id], onDelete: Cascade)
+}
+
 model Page {
-  id         Int    @id @default(autoincrement())
-  bookId     Int
-  book       Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  pageNumber Int
-  content    String
+  id             Int              @id @default(autoincrement())
+  bookId         Int
+  book           Book             @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  pageNumber     Int
+  content        String
+  CollectionPage CollectionPage[]
 
   @@unique([bookId, pageNumber], name: "uniquePageByBook")
 }

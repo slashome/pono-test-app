@@ -1,6 +1,6 @@
 import {Controller} from "./controller";
 import {IncomingMessage} from "http";
-import {ImportPayload, NewBook, Pagination} from "./models";
+import {CollectionPayload, ImportPayload, NewBook, Pagination} from "./models";
 import {Book, PrismaClient} from "@prisma/client";
 
 enum postRoutes {
@@ -10,6 +10,7 @@ enum postRoutes {
     UPDATE_BOOK = '/book',
     DELETE_BOOK = '/book',
     IMPORT = '/import',
+    COLLECTION = '/collection'
 }
 
 enum httpMethods {
@@ -58,6 +59,11 @@ export class Router
             console.info('ROUTE : mass import books');
             const payload = await this.getRequestPayload(incomingMessage);
             return this.controller.importBooks(payload as ImportPayload);
+        }
+        if (this.testRoute(incomingMessage, postRoutes.COLLECTION, httpMethods.POST)) {
+            console.info('ROUTE : create collection');
+            const payload = await this.getRequestPayload(incomingMessage);
+            return this.controller.createCollection(payload as CollectionPayload);
         }
          return null;
     }

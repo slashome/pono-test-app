@@ -1,0 +1,21 @@
+meta {
+  name: Create collection
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/collection
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "Book for Kids",
+    "bookIds": [
+      1,
+      2
+    ]
+  }
+}

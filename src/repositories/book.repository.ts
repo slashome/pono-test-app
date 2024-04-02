@@ -1,15 +1,12 @@
 import {Book, Page, Prisma, PrismaClient} from "@prisma/client";
 import {NewBook, Pagination} from "../models";
 import {PagesUpdateQuery} from "./page.repository";
-import {bookPresenter} from "../presenters";
 
 export class BookRepository {
 
-    private prisma: PrismaClient;
-
-    constructor() {
-        this.prisma = new PrismaClient();
-    }
+    constructor(
+        private prisma: PrismaClient
+    ) {}
 
     public async addBook(newBook: NewBook) {
         return this.prisma.book.create({
@@ -51,7 +48,7 @@ export class BookRepository {
         });
     }
 
-    public async getBookById(bookId: number | null, include: {  pages: boolean }): Promise<Book> {
+    public async getBookById(bookId: number, include: {  pages: boolean }): Promise<Book> {
         return this.prisma.book.findUnique({
             include: include,
             where: {
@@ -60,7 +57,18 @@ export class BookRepository {
         });
     }
 
-    public async getBooksWithPagination(pagination: Pagination) {
+    public async getBooksByIds(booksIds: number[], include: { pages: boolean }): Promise<Book[]> {
+        return this.prisma.book.findMany({
+            include: include,
+            where: {
+                id: {
+                    in: booksIds
+                }
+            }
+        });
+    }
+
+    public async getBooksWithPagination(pagination: Pagination): Promise<Book[]> {
         return this.prisma.book.findMany({
             ...pagination,
             select: {
