@@ -14,3 +14,14 @@ export interface Pagination {
     skip: number;
     take: number;
 }
+
+export interface ImportPayload {
+    type: string;
+    path: string;
+}
+
+export interface MessageResponse {
+    error?: boolean;
+    message: string;
+}
+

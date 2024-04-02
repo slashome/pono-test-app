@@ -12,5 +12,6 @@
 
 - Install [Bruno](https://www.usebruno.com/)
 - Import Bruno folder located in `/resources/bruno`
+- Select `Dev` environment
 - Test
 

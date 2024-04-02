@@ -73,7 +73,6 @@ export class PageRepository {
 
         const pagesToUpdateQuery = (pagesToUpdate.length > 0) ? {
             update: pagesToUpdate.map((page: Page) => {
-                console.log('PAGE TO UPDATE', page);
                 return {
                     where: {
                         id: page.id
@@ -84,8 +83,6 @@ export class PageRepository {
                 }
             })
         } : null;
-
-        console.log(pagesToUpdateQuery);
 
         return {
             pages: {

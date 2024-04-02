@@ -64,6 +64,7 @@ export class BookRepository {
         return this.prisma.book.findMany({
             ...pagination,
             select: {
+                id: true,
                 title: true,
                 publicationDate: true,
             }

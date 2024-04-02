@@ -1,6 +1,6 @@
 import {Controller} from "./controller";
 import {IncomingMessage} from "http";
-import {NewBook, Pagination} from "./models";
+import {ImportPayload, NewBook, Pagination} from "./models";
 import {Book, PrismaClient} from "@prisma/client";
 
 enum postRoutes {
@@ -9,6 +9,7 @@ enum postRoutes {
     GET_BOOKS = '/books',
     UPDATE_BOOK = '/book',
     DELETE_BOOK = '/book',
+    IMPORT = '/import',
 }
 
 enum httpMethods {
@@ -29,34 +30,39 @@ export class Router
         const prisma = new PrismaClient();
         if (this.testRoute(incomingMessage, postRoutes.POST_BOOK, httpMethods.POST)) {
             console.info('ROUTE : add book');
-            const body = await this.getBody(incomingMessage);
-            return this.controller.addBook(body as NewBook);
+            const payload = await this.getRequestPayload(incomingMessage);
+            return this.controller.addBook(payload as NewBook);
+        }
+        if (this.testRoute(incomingMessage, postRoutes.GET_BOOKS, httpMethods.GET)) {
+            console.info('ROUTE : get books');
+            const payload = await this.getRequestPayload(incomingMessage);
+            return this.controller.getBooks(payload as Pagination);
         }
         if (this.testRoute(incomingMessage, postRoutes.GET_BOOK, httpMethods.GET)) {
             console.info('ROUTE : get book');
             const bookId = this.getIdFromUrl(incomingMessage.url);
             return this.controller.getFullBook(bookId);
         }
-        if (this.testRoute(incomingMessage, postRoutes.GET_BOOKS, httpMethods.GET)) {
-            console.info('ROUTE : get books');
-            const body = await this.getBody(incomingMessage);
-            return this.controller.getBooks(body as Pagination);
-        }
         if (this.testRoute(incomingMessage, postRoutes.UPDATE_BOOK, httpMethods.PUT)) {
             console.info('ROUTE : update book');
             const bookId = this.getIdFromUrl(incomingMessage.url);
-            const body = await this.getBody(incomingMessage);
-            return this.controller.updateBook(bookId, body as Book);
+            const payload = await this.getRequestPayload(incomingMessage);
+            return this.controller.updateBook(bookId, payload as Book);
         }
         if (this.testRoute(incomingMessage, postRoutes.DELETE_BOOK, httpMethods.DELETE)) {
             console.info('ROUTE : delete book');
             const bookId = this.getIdFromUrl(incomingMessage.url);
             return this.controller.deleteBook(bookId);
         }
-        return null;
+        if (this.testRoute(incomingMessage, postRoutes.IMPORT, httpMethods.POST)) {
+            console.info('ROUTE : mass import books');
+            const payload = await this.getRequestPayload(incomingMessage);
+            return this.controller.importBooks(payload as ImportPayload);
+        }
+         return null;
     }
 
-    private async getBody(incomingMessage: IncomingMessage): Promise<any> {
+    private async getRequestPayload(incomingMessage: IncomingMessage): Promise<any> {
         return new Promise((resolve, reject) => {
             let body = '';
             incomingMessage.on('data', (chunk) => {
@@ -68,7 +74,7 @@ export class Router
                     reject(null);
                 }
                 const jsonBody = JSON.parse(body);
-                console.info('Request body', jsonBody);
+                console.info('Request payload', jsonBody);
                 resolve(jsonBody);
             });
             incomingMessage.on('error', (error) => {
@@ -77,7 +83,7 @@ export class Router
         });
     }
     /*
-    @TODO: Fix url collision if ID is present in the URL : /book/1 = /book
+    @TODO: Fix url collision if ID is present in the URL : /book/1 = /book > for now /book == /books
      */
     private testRoute(incomingMessage: IncomingMessage, endpoint: postRoutes, method: httpMethods): boolean {
         if (!incomingMessage.url) {
@@ -91,6 +97,8 @@ export class Router
         if (!digits) {
             return NaN;
         }
-        return parseInt(digits[0]);
+        const id = parseInt(digits[0]);
+        console.info('ID from URL', id);
+        return id;
     }
 }
