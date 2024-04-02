@@ -47,21 +47,32 @@ export class Controller {
         if (books.length === 0 || !books) {
             return {message: 'No books found'};
         }
-        return new Promise(async (resolve, reject) => {
-            const booksPricesPromises: Promise<BookPriceFromAPI>[] = books.map((book: Book) => {
-                return this.priceApi.getPrice(book.id);
-            });
-            const bookPrices: BookPriceFromAPI[] = await Promise.all(booksPricesPromises);
-            const booksWithPrices = books.map((book: Book) => {
-                const bookPrice = bookPrices.find((price: BookPriceFromAPI) => price.bookId === book.id);
-                return {
-                    ...book,
-                    price: bookPrice?.price,
-                }
-            });
-            const presentedBooks = booksWithPrices.map(bookPresenter);
-            resolve(presentedBooks);
+        return books.map(bookPresenter);
+    }
+
+    async getSpecialBooksList(pagination: Pagination): Promise<Book[] | MessageResponse> {
+        const books: Book[] = await this.bookRepository.getBooksWithPagination(pagination);
+        if (books.length === 0 || !books) {
+            return {message: 'No books found'};
+        }
+        const booksIds: number[] = books.map((book: Book) => {
+            return book.id;
         });
+        const pages = await this.pageRepository.getPagesOrderedAlphabetically(booksIds);
+        const booksPricesPromises: Promise<BookPriceFromAPI>[] = books.map((book: Book) => {
+            return this.priceApi.getPrice(book.id);
+        });
+        const bookPrices: BookPriceFromAPI[] = await Promise.all(booksPricesPromises);
+        const consolidatedBooks: Book = books.map((book: Book) => {
+            const bookPages = pages.filter((page: Page) => page.bookId === book.id);
+            const bookPrice = bookPrices.find((price: BookPriceFromAPI) => price.bookId === book.id);
+            return {
+                ...book,
+                price: bookPrice?.price,
+                pages: bookPages,
+            }
+        });
+        return consolidatedBooks.map(fullBookPresenter);
     }
 
     async updateBook(bookId: number, modifiedBook: Book): Promise<any> {

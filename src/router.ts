@@ -10,7 +10,8 @@ enum postRoutes {
     UPDATE_BOOK = '/book',
     DELETE_BOOK = '/book',
     IMPORT = '/import',
-    COLLECTION = '/collection'
+    COLLECTION = '/collection',
+    GET_SPECIAL_BOOKS_LIST = '/special-books-list',
 }
 
 enum httpMethods {
@@ -64,6 +65,11 @@ export class Router
             console.info('ROUTE : create collection');
             const payload = await this.getRequestPayload(incomingMessage);
             return this.controller.createCollection(payload as CollectionPayload);
+        }
+        if (this.testRoute(incomingMessage, postRoutes.GET_SPECIAL_BOOKS_LIST, httpMethods.GET)) {
+            console.info('ROUTE : get special books list with price and pages ordered alphabetically');
+            const payload = await this.getRequestPayload(incomingMessage);
+            return this.controller.getSpecialBooksList(payload as Pagination);
         }
          return null;
     }

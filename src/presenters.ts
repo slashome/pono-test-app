@@ -1,4 +1,4 @@
-import {Book, Page} from "@prisma/client";
+import {Book} from "@prisma/client";
 
 export function bookPresenter(book: Book) {
     let bookPrice;
@@ -13,8 +13,6 @@ export function bookPresenter(book: Book) {
 }
 
 export function fullBookPresenter(book: Book) {
-    // order pages by pageNumber
-    book.pages = book.pages.sort((a: Page, b: Page) => a.pageNumber - b.pageNumber);
     return {
         ...book,
         publicationDate: formatDate(book.publicationDate),

@@ -89,4 +89,17 @@ export class PageRepository {
             }
         };
     }
+
+    getPagesOrderedAlphabetically(booksIds: number[]) {
+        return this.prisma.page.findMany({
+            where: {
+                bookId: {
+                    in: booksIds
+                }
+            },
+            orderBy: {
+                content: 'asc'
+            }
+        });
+    }
 }

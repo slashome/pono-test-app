@@ -1,3 +1,5 @@
+import {Book} from "@prisma/client";
+
 export interface NewPage {
     content: string;
     pageNumber: number;

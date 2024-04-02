@@ -1,0 +1,18 @@
+meta {
+  name: Get special list books
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/special-books-list
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "skip": 0,
+    "take": 10
+  }
+}
