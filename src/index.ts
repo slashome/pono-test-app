@@ -7,10 +7,15 @@ const SERVER_PORT = 3000;
 
 const server: http.Server = createServer((incomingMessage: IncomingMessage, serverResponse: ServerResponse) => {
     serverResponse.setHeader('Content-Type', 'application/json');
-    let defaultAppResponse = { message: "Hello World" };
-    console.log('Incoming request', incomingMessage.url);
-    const appResponse = Router.findRoute(incomingMessage);
-    serverResponse.end(JSON.stringify(defaultAppResponse ?? appResponse));
+    console.info('Incoming request', incomingMessage.url);
+    const router = new Router();
+    const appResponse = router.findRoute(incomingMessage);
+    appResponse.then((response) => {
+        serverResponse.end(JSON.stringify(response ?? { message: "Endpoint not found" }));
+    }).catch((error) => {
+        console.error('Error processing request', error);
+        serverResponse.end(JSON.stringify({message: "Error processing request"}));
+    });
 });
 server.listen(SERVER_PORT, () => {
     console.log(`Listening on port ${ SERVER_PORT }`);

@@ -10,7 +10,7 @@ datasource db {
 model Book {
   id              Int      @id @default(autoincrement())
   author          String
-  title           String
+  title           String   @unique
   publicationDate DateTime
   pages           Page[]
 }
@@ -18,7 +18,9 @@ model Book {
 model Page {
   id         Int    @id @default(autoincrement())
   bookId     Int
-  book       Book   @relation(fields: [bookId], references: [id])
+  book       Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
   pageNumber Int
   content    String
+
+  @@unique([bookId, pageNumber], name: "uniquePageByBook")
 }

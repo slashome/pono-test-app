@@ -1,11 +1,11 @@
 meta {
-  name: Add book
+  name: Update book - Zeubi
   type: http
-  seq: 3
+  seq: 6
 }
 
-post {
-  url: {{baseUrl}}/book
+put {
+  url: {{baseUrl}}/book/1
   body: json
   auth: none
 }
@@ -31,6 +31,14 @@ body:json {
       {
         "pageNumber": 4,
         "content": "Fût fort deçu"
+      },
+      {
+        "pageNumber": 5,
+        "content": "Sentant ainsi l'haleine fetide"
+      },
+      {
+        "pageNumber": 6,
+        "content": "De ce cher AAristide"
       }
     ]
   }

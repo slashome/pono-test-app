@@ -1,0 +1,37 @@
+meta {
+  name: Add book - Zeubi
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/book
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "author": "Zeubi la mouche",
+    "title": "Manger des Pommes",
+    "publicationDate": "2024/01/12",
+    "pages": [
+      {
+        "pageNumber": 1,
+        "content": "C'est l'histoire de zeubi la mouche"
+      },
+      {
+        "pageNumber": 2,
+        "content": "Qui venu se poser sur la bouche"
+      },
+      {
+        "pageNumber": 3,
+        "content": "Du premier venu"
+      },
+      {
+        "pageNumber": 4,
+        "content": "Fût fort deçu"
+      }
+    ]
+  }
+}

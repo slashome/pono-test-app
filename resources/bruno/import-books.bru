@@ -1,0 +1,18 @@
+meta {
+  name: Import folder
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/import
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "type": "folder",
+    "path": "/resources/import",
+  }
+}
